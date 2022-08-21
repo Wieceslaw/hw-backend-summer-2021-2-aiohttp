@@ -1,5 +1,6 @@
 import typing
 
+from app.store.admin.accessor import AdminAccessor
 from app.store.database.database import Database
 
 if typing.TYPE_CHECKING:
@@ -11,6 +12,7 @@ class Store:
         from app.store.quiz.accessor import QuizAccessor
 
         self.quizzes = QuizAccessor(app)
+        self.admins = AdminAccessor(app)
 
 
 def setup_store(app: "Application"):

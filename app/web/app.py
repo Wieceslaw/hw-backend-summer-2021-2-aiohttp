@@ -1,10 +1,14 @@
 from typing import Optional
+import base64
 
 from aiohttp.web import (
     Application as AiohttpApplication,
     View as AiohttpView,
     Request as AiohttpRequest,
 )
+from aiohttp_apispec import setup_aiohttp_apispec
+from aiohttp_session import setup
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
 
 from app.admin.models import Admin
 from app.store import setup_store, Store
@@ -52,4 +56,5 @@ def setup_app(config_path: str) -> Application:
     setup_routes(app)
     setup_middlewares(app)
     setup_store(app)
+    setup_aiohttp_apispec(app)
     return app

@@ -11,11 +11,21 @@ if typing.TYPE_CHECKING:
 
 class AdminAccessor(BaseAccessor):
     async def connect(self, app: "Application"):
-        # TODO: создать админа по данным в config.yml здесь
-        raise NotImplementedError
+        new_admin = await self.create_admin(
+            self.app.config.admin.email,
+            self.app.config.admin.password
+        )
+        self.app.database.admins.append(new_admin)
 
     async def get_by_email(self, email: str) -> Optional[Admin]:
-        raise NotImplementedError
+        for admin in self.app.database.admins:
+            if admin.email == email:
+                return admin
+        return None
 
     async def create_admin(self, email: str, password: str) -> Admin:
-        raise NotImplementedError
+        return Admin(
+            id=self.app.database.next_admin_id,
+            email=email,
+            password=password
+        )

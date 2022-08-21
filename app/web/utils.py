@@ -21,4 +21,11 @@ def error_json_response(
     message: Optional[str] = None,
     data: Optional[dict] = None,
 ):
-    raise NotImplementedError
+    return aiohttp_json_response(
+        status=http_status,
+        data={
+            "status": status,
+            "message": message,
+            "data": data,
+        }
+    )
