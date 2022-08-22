@@ -1,6 +1,7 @@
 import base64
 import json
 import typing
+from hashlib import sha256
 
 from aiohttp.web_exceptions import HTTPUnprocessableEntity, HTTPException, HTTPForbidden
 from aiohttp.web_middlewares import middleware
@@ -57,15 +58,14 @@ async def auth_session_middleware(request: "Request", handler):
     if not session.empty:
         email = session.get('email', None)
         password = session.get('password', None)
-        if email and password:
-            admin = await request.app.store.admins.get_by_email(email)
-            if admin is None:
-                raise HTTPForbidden
-            else:
-                if admin.password == password:
-                    request.admin = admin
-                else:
-                    raise HTTPForbidden
+        if not email or not password:
+            raise HTTPForbidden
+        admin = await request.app.store.admins.get_by_email(email)
+        if admin is None:
+            raise HTTPForbidden
+        if admin.password != password:
+            raise HTTPForbidden
+        request.admin = admin
     return await handler(request)
 
 

@@ -27,5 +27,5 @@ class AdminAccessor(BaseAccessor):
         return Admin(
             id=self.app.database.next_admin_id,
             email=email,
-            password=password
+            password=sha256(password.encode()).hexdigest()
         )
