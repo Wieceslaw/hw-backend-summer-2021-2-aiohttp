@@ -64,17 +64,16 @@ class VkApiAccessor(BaseAccessor):
             params={
                 "act": "a_check",
                 "key": self.key,
-                "ts": 4,
+                "ts": self.ts,
             }
         )
         response = await self.session.get(query)
         json_data = await response.json()
-        data = json_data["response"]
+        data = json_data
         self.ts = data["ts"]
         raw_updates = data["updates"]
         updates = []
         for raw_update in raw_updates:
-            # TODO: add schemes deserialization
             message = raw_update["object"]["message"]
             update = Update(
                 type=raw_update["type"],

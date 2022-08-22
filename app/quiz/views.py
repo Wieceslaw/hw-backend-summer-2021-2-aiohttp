@@ -1,18 +1,20 @@
-from aiohttp_apispec import request_schema, response_schema
 from aiohttp.web_exceptions import HTTPConflict, HTTPBadRequest, HTTPNotFound
+from aiohttp_apispec import request_schema, response_schema, docs
 
 from app.quiz.models import Answer
 from app.quiz.schemes import (
-    ThemeSchema, ThemeListSchema, QuestionSchema, ListQuestionSchema,
+    ThemeSchema, QuestionSchema, ThemeResponseSchema, ThemeRequestSchema,
+    ThemeListResponseSchema, QuestionResponseSchema, QuestionRequestSchema, QuestionListResponseSchema,
 )
 from app.web.app import View
-from app.web.utils import json_response
 from app.web.mixins import AuthRequiredMixin
+from app.web.utils import json_response
 
 
 class ThemeAddView(AuthRequiredMixin, View):
-    @request_schema(ThemeSchema)
-    @response_schema(ThemeSchema, 200)
+    @docs(tags=["theme"], summary="create theme")
+    @request_schema(ThemeRequestSchema)
+    @response_schema(ThemeResponseSchema, 200)
     async def post(self):
         title = self.data["title"]
         theme = await self.store.quizzes.get_theme_by_title(title)
@@ -23,15 +25,17 @@ class ThemeAddView(AuthRequiredMixin, View):
 
 
 class ThemeListView(AuthRequiredMixin, View):
-    @response_schema(ThemeListSchema, 200)
+    @docs(tags=["theme"], summary="list theme")
+    @response_schema(ThemeListResponseSchema, 200)
     async def get(self):
         themes = await self.store.quizzes.list_themes()
         return json_response(data={'themes': ThemeSchema(many=True).dump(themes)})
 
 
 class QuestionAddView(AuthRequiredMixin, View):
-    @request_schema(QuestionSchema)
-    @response_schema(QuestionSchema, 200)
+    @docs(tags=["question"], summary="create question")
+    @request_schema(QuestionRequestSchema)
+    @response_schema(QuestionResponseSchema, 200)
     async def post(self):
         title = self.data['title']
         theme_id = self.data['theme_id']
@@ -62,7 +66,8 @@ class QuestionAddView(AuthRequiredMixin, View):
 
 
 class QuestionListView(AuthRequiredMixin, View):
-    @response_schema(ListQuestionSchema, 200)
+    @docs(tags=["question"], summary="list question")
+    @response_schema(QuestionListResponseSchema, 200)
     async def get(self):
         questions = await self.store.quizzes.list_questions()
         return json_response(data={'questions': QuestionSchema(many=True).dump(questions)})

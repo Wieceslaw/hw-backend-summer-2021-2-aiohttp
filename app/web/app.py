@@ -56,5 +56,5 @@ def setup_app(config_path: str) -> Application:
     setup_routes(app)
     setup_middlewares(app)
     setup_store(app)
-    setup_aiohttp_apispec(app)
+    setup_aiohttp_apispec(app, title="Bot application", url='/docs/json', swagger_path='/docs')
     return app
